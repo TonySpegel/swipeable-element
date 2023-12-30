@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./pre-made-demo.css" />
+
+    <style>
+      :root {
+        --base-gap: 1rem;
+        --base-radius: 0.6rem;
+
+        --card-bg-color: #e3f2fd;
+      }
+
+      body {
+        background: #fafafa;
+        font-family: sans-serif;
+      }
+
+      #swipe-container {
+        display: flex;
+        justify-content: center;
+
+        margin: 0 auto;
+        width: 100%;
+        max-width: 420px;
+
+        /* contains at least one swipeable-element */
+        &:has(swipeable-element) button#reload {
+          display: none;
+        }
+
+        /* does not contain swipeable-element */
+        &:not(:has(swipeable-element)) {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          & button#reload {
+            display: block;
+          }
+
+          & #swipeable-element-list {
+            display: none;
+          }
+        }
+      }
+
+      #swipeable-element-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--base-gap);
+        justify-self: center;
+
+        padding: 0;
+        width: 100%;
+      }
+
+      swipeable-element {
+        font-size: 3rem;
+
+        & button {
+          font-size: 1.5rem;
+        }
+
+        &::part(card-bg) {
+          grid-area: card;
+          align-items: center;
+
+          border-radius: var(--base-radius);
+          background-color: var(--card-bg-color);
+        }
+
+        &::part(card-bg-action-start) {
+          display: flex;
+          padding: var(--base-gap);
+        }
+
+        &::part(card-bg-action-end) {
+          display: flex;
+          justify-content: flex-end;
+          padding: var(--base-gap);
+        }
+
+        &::part(card-content) {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: var(--base-gap);
+
+          grid-area: card;
+
+          border-radius: var(--base-radius);
+          padding: var(--base-gap);
+
+          --duration: 0.3s;
+        }
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+  </head>
+
+  <body>
+    <script type="module">
+      import '../dist/src/swipeable-element.js';
+    </script>
+
+    <div id="swipe-container">
+      <button id="reload"  onClick="location.href = location.pathname;">refresh</button>
+
+      <ul id="swipeable-element-list">
+        <swipeable-element role="listitem" style="view-transition-name: c1">
+          <span slot="card-bg-action-start" class="material-symbols-outlined">delete</span>
+          <span slot="card-bg-action-end" class="material-symbols-outlined">mail</span>
+          <button slot="card-delete">Del</button>
+        </swipeable-element>
+
+        <swipeable-element role="listitem" style="view-transition-name: c2">
+          <span slot="card-bg-action-start" class="material-symbols-outlined">delete</span>
+          <span slot="card-bg-action-end" class="material-symbols-outlined">mail</span>
+          <button slot="card-delete">Del</button>
+        </swipeable-element>
+
+        <swipeable-element role="listitem" style="view-transition-name: c3">
+          <span slot="card-bg-action-start" class="material-symbols-outlined">delete</span>
+          <span slot="card-bg-action-end" class="material-symbols-outlined">mail</span>
+          <button slot="card-delete">Del</button>
+        </swipeable-element>
+      </ul>
+    </div>
+  </body>
+</html>
