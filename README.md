@@ -4,6 +4,20 @@ This web component explores the possibilities of a swipeable element. Existing c
 
 This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.
 
+## Key differences
+- Uses [view-transitions](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) to animate the deletion of items
+- Uses pointer-events to unify different input methods
+- Is a web component made with [Lit](https://lit.dev/) and works per element
+- Can be configured with attributes, variables and CSS parts
+
+## Accessiblity considerations
+
+A horizontal swipe gesture as used in this component is interpreted by <abbr>WCAG</abbr> (Web Content Accessibility Guidelines):[^3] as a so-called path-based gesture and therefore:
+
+> All functionality that uses multipoint or path-based gestures for operation can be operated with a single pointer without a path-based gesture, unless a multipoint or path-based gesture is essential.
+
+TODO: name Apps and how they handle this^
+
 ## Installation
 
 ```bash
@@ -64,5 +78,7 @@ npm start
 To run a local development server that serves the basic demo located in `demo/index.html`
 
 
-[^1]: [GitHub repository](https://github.com/GoogleChromeLabs/ui-element-samples/blob/gh-pages/swipeable-cards/cards.js)  
-[^2]: [YouTube: Swipeable Cards: TL;DW - Supercharged](https://www.youtube.com/watch?v=F3A6Skckh9c)
+[^1]: [GitHub: GoogleChromeLabs - swipeable-cards](https://github.com/GoogleChromeLabs/ui-element-samples/blob/gh-pages/swipeable-cards/cards.js)  
+[^2]: [YouTube: Swipeable Cards: TL;DW - Supercharged](https://www.youtube.com/watch?v=F3A6Skckh9c)  
+[^3]: [WCAG: Pointer Gestures (Level A)](https://www.w3.org/WAI/WCAG21/Understanding/pointer-gestures.html)  
+[^4]: [Flutter: Dismissible widget](https://docs.flutter.dev/cookbook/gestures/dismissible)
