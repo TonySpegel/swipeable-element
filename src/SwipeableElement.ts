@@ -6,11 +6,17 @@ import { classMap } from 'lit/directives/class-map.js';
 /**
  * TODO:
  * - [] confirm[Start|End]Action: @property({ type: Boolean }) accessor confirmStartAction = false;
- * - [] isMoving @state
  */
 
-const calcTreshold = (targetWidth: number, treshold: number) =>
-  targetWidth * treshold;
+const calcTreshold = (targetWidth: number, treshold: number) => {
+  return targetWidth * treshold;
+};
+
+const calcOpacity = (screenX: number, elementWidth: number) => {
+  const normalizedDragDistance = Math.abs(screenX) / elementWidth;
+
+  return 1 - normalizedDragDistance ** 3;
+};
 
 export class SwipeableElement extends LitElement {
   static styles = css`
@@ -53,6 +59,7 @@ export class SwipeableElement extends LitElement {
       cursor: grab;
     }
   `;
+
   @state()
   accessor targetBCR!: DOMRect;
 
@@ -97,8 +104,6 @@ export class SwipeableElement extends LitElement {
     window.removeEventListener('pointermove', this.onMove);
     window.removeEventListener('pointerup', this.onEnd);
     window.removeEventListener('pointercancel', this.onEnd);
-
-    console.log('disconnected');
   }
 
   deleteElement() {
@@ -115,7 +120,7 @@ export class SwipeableElement extends LitElement {
   }
 
   onStart(event: PointerEvent) {
-    if (event.button !== 0) return;
+    if (event.button !== 0) return; // everything except main/left button was pressed
     if (this.target) return;
 
     const { pageX, target } = event;
@@ -131,24 +136,10 @@ export class SwipeableElement extends LitElement {
     this.elementDragging = true;
 
     event.preventDefault();
-
-    // if (this.target) {
-    //   console.log('yay');
-
-    //   return;
-    // }
-
-    // this.target = e.target as HTMLElement;
-    // this.targetBCR = (this.target as HTMLElement).getBoundingClientRect();
-
-    // this.startX = this.elementPageX(e); // deleted
-    // this.currentX = this.startX;
-
-    // e.preventDefault();
   }
 
-  onMove = (e: PointerEvent) => {
-    this.currentX = e.pageX;
+  onMove = (event: PointerEvent) => {
+    this.currentX = event.pageX;
 
     if (!this.target) {
       return;
@@ -157,14 +148,11 @@ export class SwipeableElement extends LitElement {
     if (this.elementDragging) {
       this.elementResetting = false;
       this.screenX = this.currentX - this.startX;
-    } else {
-      this.screenX += (this.targetX - this.screenX) / 4;
     }
 
-    this.opacity = 1 - Math.pow(this.normalizedDragDistance(), 3);
+    this.opacity = calcOpacity(this.screenX, this.targetBCR?.width);
 
     if (this.elementDragging) {
-      console.log('finished dragging');
       return;
     }
 
@@ -184,9 +172,6 @@ export class SwipeableElement extends LitElement {
   };
 
   onEnd = () => {
-    console.log('');
-    console.log('↓========END========↓');
-
     this.targetX = 0;
 
     const treshold = calcTreshold(this.targetBCR?.width, this.treshold);
@@ -197,7 +182,7 @@ export class SwipeableElement extends LitElement {
 
       this.deleteElement();
     } else {
-      console.log(this.target);
+      console.log('we are here');
 
       this.screenX = 0;
 
@@ -206,11 +191,7 @@ export class SwipeableElement extends LitElement {
     }
 
     this.elementDragging = false;
-    console.log('↑========END========↑');
-    console.log('');
   };
-
-  normalizedDragDistance = () => Math.abs(this.screenX) / this.targetBCR?.width;
 
   render() {
     return html`
@@ -222,7 +203,9 @@ export class SwipeableElement extends LitElement {
         <div
           @pointerdown=${this.onStart}
           @touchstart=${(event: TouchEvent) => event.preventDefault()}
-          @transitionend=${() => (this.elementResetting = false)}
+          @transitionend=${() => {
+            this.elementResetting = false;
+          }}
           class=${classMap({
             dragging: this.elementDragging,
             resetting: this.elementResetting,
