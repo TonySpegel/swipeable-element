@@ -1,8 +1,11 @@
 # \<swipeable-element>
 
 This web component explores the possibilities of a swipeable element. Existing code from Paul Lewis[^1][^2] is adapted and implemented with additional options as a Lit Web Component.  
-It is primarily there to demonstrate interaction through swiping and is not necessarily intended to be used in production. Please make sure to use the right [patterns](#ux--accessiblity-considerations) to make a component like this as accessible as possible.
+It is primarily there to demonstrate interaction through swiping and is not necessarily intended to be used in production. Please make sure to use the right [patterns](#ux--accessiblity-considerations) to make a component like this as accessible as possible. Jump to: [Key differences](#key-differences)
 
+https://github.com/TonySpegel/swipeable-element/assets/1145514/fbc44205-1960-4fce-b169-7dd8b3ec475f  
+
+SRT file for [captions](/assets/swipeable-element.mp4.srt)
 
 This web component follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.
 
@@ -11,7 +14,7 @@ This web component follows the [open-wc](https://github.com/open-wc/open-wc) rec
 A few notable differences compared to Paul Lewis' solution:
 
 - Uses [view-transitions](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) to animate the deletion of items
-- Uses pointer-events to unify different input methods
+- Uses [pointer-events](https://www.redblobgames.com/making-of/draggable/) to unify different input methods
 - Is a web component made with [Lit](https://lit.dev/)
 - An update method or `requestAnimationFrame` isn't needed as Lit handles that
 - Can be configured with [slots](#slots), [attributes](#attributes), [CSS variables](#css-custom-properties-variables), [classes](#css-classes) and [CSS parts](#css-parts)
@@ -24,7 +27,7 @@ A horizontal swipe gesture as used in this component is interpreted by the <abbr
 
 > All functionality that uses multipoint or path-based gestures for operation can be operated with a single pointer without a path-based gesture, unless a multipoint or path-based gesture is essential.
 
-For example, Outlook, GMail and Discord all offer alternatives in the form of a context menu that can be activated by a long press or in the form of a submenu/detail view. It is also common to offer an indicator which makes it clear which action is hidden behind a swipe direction.
+For example, Outlook, GMail and Discord all offer alternatives in the form of a context menu that can be activated by a long press or in the form of a submenu/detail view. It is also common to offer an indicator which makes it clear which action is hidden behind a swipe direction - this is sometimes referred to as the "leave behind" indicator[^4].
 
 ## Usage
 
@@ -163,5 +166,4 @@ To run a local development server that serves the basic demo located in `demo/in
 [^1]: [GitHub: GoogleChromeLabs - swipeable-cards](https://github.com/GoogleChromeLabs/ui-element-samples/blob/gh-pages/swipeable-cards/cards.js)  
 [^2]: [YouTube: Swipeable Cards: TL;DW - Supercharged](https://www.youtube.com/watch?v=F3A6Skckh9c)  
 [^3]: [WCAG: Pointer Gestures (Level A)](https://www.w3.org/WAI/WCAG21/Understanding/pointer-gestures.html)  
-[^4]: [Flutter: Dismissible widget](https://docs.flutter.dev/cookbook/gestures/dismissible)  
-[^5]: [Draggable objects from Red Blob Games](https://www.redblobgames.com/making-of/draggable/)
+[^4]: [Flutter: Dismissible widget](https://docs.flutter.dev/cookbook/gestures/dismissible)
