@@ -9,8 +9,6 @@
       :root {
         --base-gap: 1rem;
         --base-radius: 0.6rem;
-
-        --card-bg-color: #e3f2fd;
       }
 
       body {
@@ -57,6 +55,21 @@
       }
 
       swipeable-element {
+        span {
+          &.drag {
+            display: none;
+          }
+        }
+
+        &[dragging] span {
+          &.drag {
+            display: block;
+          }
+
+          &.reset {
+            display: none;
+          }
+        }
 
         & button {
           font-size: 1.5rem;
@@ -67,39 +80,28 @@
         }
 
         &::part(action-indicator) {
-          grid-area: card;
-          align-items: center;
-
           border-radius: var(--base-radius);
-          background-color: var(--card-bg-color);
         }
 
         &::part(action-indicator-left) {
           display: flex;
           padding: var(--base-gap);
-        }
 
-        &::part(action-indicator-right) {
-          display: flex;
-          padding: var(--base-gap);
-        }
-
-        &::part(action-indicator-left){
           font-size: 1.3rem;
           text-wrap: balance;
           width: 50%;
         }
 
         &::part(action-indicator-right) {
+          display: flex;
+          padding: var(--base-gap);
           justify-content: flex-end;
         }
 
         &::part(content) {
           display: flex;
           align-items: center;
-          justify-content: flex-end;
           gap: var(--base-gap);
-          grid-area: card;
 
           border-radius: var(--base-radius);
           padding: var(--base-gap);
@@ -135,6 +137,10 @@
           <span slot="action-indicator-left">Swipe to set up actions</span>
           <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
           <button slot="card-delete">Del</button>
+          <div>
+            <span class="drag">👀</span>
+            <span class="reset">🐸</span>
+          </div>
         </swipeable-element>
 
         <swipeable-element role="listitem" style="view-transition-name: c2">

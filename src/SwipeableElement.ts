@@ -22,11 +22,11 @@ const calcOpacity = (screenX: number, elementWidth: number) => {
 export class SwipeableElement extends LitElement {
   static styles = css`
     :host {
-      --base-gap: 1rem;
-      --base-radius: 0.6rem;
-
-      --duration: 3.1s;
+      --duration: 0.3s;
       --timing-function: ease-in-out;
+
+      --action-indicator-bg-color: #e3f2fd;
+      --content-bg-color: rgb(230, 230, 255);
 
       display: block;
     }
@@ -37,21 +37,23 @@ export class SwipeableElement extends LitElement {
 
     [part='element-wrapper'] {
       display: grid;
-      grid-template-areas: 'card';
+      grid-template-areas: 'stack';
       direction: ltr;
-
-      &:focus-within {
-        border: 1px solid red;
-      }
     }
 
     [part='action-indicator'] {
       display: grid;
-      grid-area: card;
-      grid-template-columns: [start] 1fr [end] 1fr;
+      grid-area: stack;
+      grid-template-columns: [indicator-left] 1fr [indicator-right] 1fr;
+      align-items: center;
+
+      background-color: var(--action-indicator-bg-color);
     }
 
     [part='content'] {
+      grid-area: stack;
+      justify-content: center;
+
       &.resetting {
         transition-duration: var(--duration);
         transition-property: 'transition';
@@ -62,7 +64,7 @@ export class SwipeableElement extends LitElement {
         cursor: grabbing;
       }
 
-      background-color: rgb(230, 230, 255);
+      background-color: var(--content-bg-color);
       cursor: grab;
     }
   `;
@@ -73,20 +75,20 @@ export class SwipeableElement extends LitElement {
   startX: number = 0;
   currentX: number = 0;
 
-  @state()
-  accessor #elementDragging = false;
+  @property({ type: Boolean, reflect: true })
+  accessor dragging = false;
 
-  @state()
-  accessor #elementResetting = false;
+  @property({ type: Boolean, reflect: true })
+  accessor resetting = false;
+
+  @property({ type: Number })
+  accessor treshold = 0.35;
 
   @state()
   accessor #screenX: number = 0;
 
   @state()
   accessor #opacity: number = 1;
-
-  @property({ type: Number })
-  accessor treshold = 0.35;
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -117,7 +119,7 @@ export class SwipeableElement extends LitElement {
     (this.target as HTMLElement).style.transform = 'none';
     this.target = null;
 
-    this.#elementResetting = true;
+    this.resetting = true;
     this.#opacity = 1;
     this.#screenX = 0;
   }
@@ -137,7 +139,7 @@ export class SwipeableElement extends LitElement {
     this.startX = pageX;
     this.currentX = this.startX;
 
-    this.#elementDragging = true;
+    this.dragging = true;
 
     event.preventDefault(); // TODO problems w/ touch
   }
@@ -149,14 +151,14 @@ export class SwipeableElement extends LitElement {
       return;
     }
 
-    if (this.#elementDragging) {
-      this.#elementResetting = false;
+    if (this.dragging) {
+      this.resetting = false;
       this.#screenX = this.currentX - this.startX;
     }
 
     this.#opacity = calcOpacity(this.#screenX, this.targetBCR?.width);
 
-    if (this.#elementDragging) {
+    if (this.dragging) {
       return;
     }
 
@@ -188,7 +190,7 @@ export class SwipeableElement extends LitElement {
       this.resetElement();
     }
 
-    this.#elementDragging = false;
+    this.dragging = false;
   };
 
   render() {
@@ -209,11 +211,11 @@ export class SwipeableElement extends LitElement {
           @touchstart=${(event: TouchEvent) => event.preventDefault()}
           @transitionend=${() => {
             this.resetElement();
-            this.#elementResetting = false;
+            this.resetting = false;
           }}
           class=${classMap({
-            dragging: this.#elementDragging,
-            resetting: this.#elementResetting,
+            dragging: this.dragging,
+            resetting: this.resetting,
           })}
           style=${styleMap({
             opacity: this.#opacity,
@@ -221,10 +223,10 @@ export class SwipeableElement extends LitElement {
           })}
           part="content"
         >
-          <span>${this.#elementDragging ? '👀' : '🐸'}</span>
-          <slot @click="${this.deleteElement}" name="card-delete"></slot>
+          <slot></slot>
         </div>
       </div>
     `;
   }
 }
+// <slot @click="${this.deleteElement}" name="card-delete"></slot>

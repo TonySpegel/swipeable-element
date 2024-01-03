@@ -27,13 +27,6 @@ For example, Outlook, GMail and Discord all offer alternatives in the form of a 
 
 ## Usage
 
-### Slots
-
-| Name                   | Description                                                         |
-|------------------------|---------------------------------------------------------------------|
-|`action-indicator-left` | The component’s indicator for a left swipe, usually text or an icon |
-|`action-indicator-right`| The component’s indicator for a right swipe, usually text or an icon|
-Example usage:
 ```html
 <swipeable-element style="view-transition-name: c1">
   <span slot="action-indicator-left">Swipe to set up actions</span>
@@ -42,13 +35,22 @@ Example usage:
 </swipeable-element>
 ```
 
+### Slots
+
+| Name                   | Description                                                         |
+|------------------------|---------------------------------------------------------------------|
+|`action-indicator-left` | The component’s indicator for a left swipe, usually text or an icon |
+|`action-indicator-right`| The component’s indicator for a right swipe, usually text or an icon|
+
 ### CSS custom properties (variables)
 The following variables can be set to adjust the behaviour of the swipeable part of the component.
 
-| Name              | Description                                        | Default     |
-|-------------------|----------------------------------------------------|-------------|
-|`--timing-function`| How the swipeable element animation progresses     |`ease-in-out`|
-|`--duration`       | Length of time that the animation takes to complete|`0.3s`       |
+| Name                        | Description                                        | Default     |
+|-----------------------------|----------------------------------------------------|-------------|
+|`--duration`                 | Length of time that the animation takes to complete|`0.3s`       |
+|`--timing-function`          | How the swipeable element animation progresses     |`ease-in-out`|
+|`--action-indicator-bg-color`| Background color for the action indicator wrapper  |`ease-in-out`|
+|`--action-indicator-bg-color`| How the swipeable element animation progresses     |`ease-in-out`|
 
 ### CSS parts
 | Name                   | Description                         |
@@ -83,7 +85,9 @@ swipeable-element::part(content) {
 }
 ```
 
-## Linting and formatting
+## Project related commands
+
+### Linting and formatting
 
 To scan the project for linting and formatting errors, run
 
@@ -97,7 +101,7 @@ To automatically fix linting and formatting errors, run
 npm run format
 ```
 
-## Testing with Web Test Runner
+### Testing with Web Test Runner
 
 To execute a single test run:
 
@@ -112,13 +116,13 @@ npm run test:watch
 ```
 
 
-## Tooling configs
+### Tooling configs
 
 For most of the tools, the configuration is in the `package.json` to reduce the amount of files in your project.
 
 If you customize the configuration a lot, you can consider moving them to individual files.
 
-## Local Demo with `web-dev-server`
+### Local Demo with `web-dev-server`
 
 ```bash
 npm start
