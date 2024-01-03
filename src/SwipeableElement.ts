@@ -6,6 +6,7 @@ import { classMap } from 'lit/directives/class-map.js';
 /**
  * TODO:
  * - [] confirm[Start|End]Action: @property({ type: Boolean }) accessor confirmStartAction = false;
+ * - [] button can't be clicked on touch because of preventDefault
  */
 
 const calcTreshold = (targetWidth: number, treshold: number) => {
@@ -21,6 +22,9 @@ const calcOpacity = (screenX: number, elementWidth: number) => {
 export class SwipeableElement extends LitElement {
   static styles = css`
     :host {
+      --base-gap: 1rem;
+      --base-radius: 0.6rem;
+
       --duration: 3.1s;
       --timing-function: ease-in-out;
 
@@ -31,24 +35,27 @@ export class SwipeableElement extends LitElement {
       visibility: hidden;
     }
 
-    [part='card-holder'] {
+    [part='element-wrapper'] {
       display: grid;
       grid-template-areas: 'card';
+      direction: ltr;
 
       &:focus-within {
         border: 1px solid red;
       }
     }
 
-    [part='card-bg'] {
+    [part='action-indicator'] {
       display: grid;
       grid-area: card;
       grid-template-columns: [start] 1fr [end] 1fr;
     }
 
-    [part='card-content'] {
+    [part='content'] {
       &.resetting {
-        transition: var(--duration) var(--timing-function);
+        transition-duration: var(--duration);
+        transition-property: 'transition';
+        transition-timing-function: var(--timing-function);
       }
 
       &.dragging {
@@ -60,32 +67,23 @@ export class SwipeableElement extends LitElement {
     }
   `;
 
-  @state()
-  accessor targetBCR!: DOMRect;
+  targetBCR!: DOMRect;
+  target: EventTarget | null = null;
+  targetX: number = 0;
+  startX: number = 0;
+  currentX: number = 0;
 
   @state()
-  accessor target: EventTarget | null = null;
+  accessor #elementDragging = false;
 
   @state()
-  accessor startX: number = 0;
+  accessor #elementResetting = false;
 
   @state()
-  accessor currentX: number = 0;
+  accessor #screenX: number = 0;
 
   @state()
-  accessor screenX: number = 0;
-
-  @state()
-  accessor targetX: number = 0;
-
-  @state()
-  accessor elementDragging = false;
-
-  @state()
-  accessor elementResetting = false;
-
-  @state()
-  accessor opacity: number = 1;
+  accessor #opacity: number = 1;
 
   @property({ type: Number })
   accessor treshold = 0.35;
@@ -112,11 +110,16 @@ export class SwipeableElement extends LitElement {
     }
   }
 
-  resetTarget() {
+  resetElement() {
     if (!this.target) return;
 
+    (this.target as HTMLElement).style.willChange = 'initial';
     (this.target as HTMLElement).style.transform = 'none';
     this.target = null;
+
+    this.#elementResetting = true;
+    this.#opacity = 1;
+    this.#screenX = 0;
   }
 
   onStart(event: PointerEvent) {
@@ -124,18 +127,19 @@ export class SwipeableElement extends LitElement {
     if (this.target) return;
 
     const { pageX, target } = event;
-
     const eventTarget = target as HTMLElement;
+
+    if (eventTarget.getAttribute('part') !== 'content') return;
+
     this.target = eventTarget;
     this.targetBCR = eventTarget.getBoundingClientRect();
 
     this.startX = pageX;
     this.currentX = this.startX;
 
-    this.elementResetting = false;
-    this.elementDragging = true;
+    this.#elementDragging = true;
 
-    event.preventDefault();
+    event.preventDefault(); // TODO problems w/ touch
   }
 
   onMove = (event: PointerEvent) => {
@@ -145,19 +149,19 @@ export class SwipeableElement extends LitElement {
       return;
     }
 
-    if (this.elementDragging) {
-      this.elementResetting = false;
-      this.screenX = this.currentX - this.startX;
+    if (this.#elementDragging) {
+      this.#elementResetting = false;
+      this.#screenX = this.currentX - this.startX;
     }
 
-    this.opacity = calcOpacity(this.screenX, this.targetBCR?.width);
+    this.#opacity = calcOpacity(this.#screenX, this.targetBCR?.width);
 
-    if (this.elementDragging) {
+    if (this.#elementDragging) {
       return;
     }
 
-    const isNearlyAtStart = Math.abs(this.screenX) < 0.1;
-    const isNearlyInvisible = this.opacity < 0.01;
+    const isNearlyAtStart = Math.abs(this.#screenX) < 0.1;
+    const isNearlyInvisible = this.#opacity < 0.01;
 
     if (isNearlyInvisible) {
       if (!this.target || !(this.target as Node).parentNode) {
@@ -166,8 +170,7 @@ export class SwipeableElement extends LitElement {
 
       this.deleteElement();
     } else if (isNearlyAtStart) {
-      this.elementResetting = true;
-      this.resetTarget();
+      this.resetElement();
     }
   };
 
@@ -176,47 +179,49 @@ export class SwipeableElement extends LitElement {
 
     const treshold = calcTreshold(this.targetBCR?.width, this.treshold);
 
-    if (Math.abs(this.screenX) > treshold) {
+    if (Math.abs(this.#screenX) > treshold) {
       this.targetX =
-        this.screenX > 0 ? this.targetBCR?.width : -this.targetBCR?.width;
+        this.#screenX > 0 ? this.targetBCR?.width : -this.targetBCR?.width;
 
       this.deleteElement();
     } else {
-      console.log('we are here');
-
-      this.screenX = 0;
-
-      this.elementResetting = true;
-      this.resetTarget();
+      this.resetElement();
     }
 
-    this.elementDragging = false;
+    this.#elementDragging = false;
   };
 
   render() {
     return html`
-      <div part="card-holder">
-        <div part="card-bg">
-          <slot name="card-bg-action-start" part="card-bg-action-start"></slot>
-          <slot name="card-bg-action-end" part="card-bg-action-end"></slot>
+      <div part="element-wrapper">
+        <div part="action-indicator">
+          <slot
+            name="action-indicator-left"
+            part="action-indicator-left"
+          ></slot>
+          <slot
+            name="action-indicator-right"
+            part="action-indicator-right"
+          ></slot>
         </div>
         <div
           @pointerdown=${this.onStart}
           @touchstart=${(event: TouchEvent) => event.preventDefault()}
           @transitionend=${() => {
-            this.elementResetting = false;
+            this.resetElement();
+            this.#elementResetting = false;
           }}
           class=${classMap({
-            dragging: this.elementDragging,
-            resetting: this.elementResetting,
+            dragging: this.#elementDragging,
+            resetting: this.#elementResetting,
           })}
           style=${styleMap({
-            opacity: this.opacity,
-            transform: `translateX(${this.screenX}px)`,
+            opacity: this.#opacity,
+            transform: `translateX(${this.#screenX}px)`,
           })}
-          part="card-content"
+          part="content"
         >
-          <span>${this.elementDragging ? '👀' : '🐸'}</span>
+          <span>${this.#elementDragging ? '👀' : '🐸'}</span>
           <slot @click="${this.deleteElement}" name="card-delete"></slot>
         </div>
       </div>

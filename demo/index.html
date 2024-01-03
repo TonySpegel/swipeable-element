@@ -1,8 +1,10 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&lt;swipeable-element&gt;</title>
+
     <style>
       :root {
         --base-gap: 1rem;
@@ -46,23 +48,25 @@
       }
 
       #swipeable-element-list {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-auto-rows: 1fr;
         gap: var(--base-gap);
-        justify-self: center;
 
         padding: 0;
         width: 100%;
       }
 
       swipeable-element {
-        font-size: 3rem;
 
         & button {
           font-size: 1.5rem;
         }
 
-        &::part(card-bg) {
+        &::part(element-wrapper) {
+          height: 100%;
+        }
+
+        &::part(action-indicator) {
           grid-area: card;
           align-items: center;
 
@@ -70,29 +74,44 @@
           background-color: var(--card-bg-color);
         }
 
-        &::part(card-bg-action-start) {
+        &::part(action-indicator-left) {
           display: flex;
           padding: var(--base-gap);
         }
 
-        &::part(card-bg-action-end) {
+        &::part(action-indicator-right) {
           display: flex;
+          padding: var(--base-gap);
+        }
+
+        &::part(action-indicator-left){
+          font-size: 1.3rem;
+          text-wrap: balance;
+          width: 50%;
+        }
+
+        &::part(action-indicator-right) {
           justify-content: flex-end;
-          padding: var(--base-gap);
         }
 
-        &::part(card-content) {
+        &::part(content) {
           display: flex;
           align-items: center;
           justify-content: flex-end;
           gap: var(--base-gap);
-
           grid-area: card;
 
           border-radius: var(--base-radius);
           padding: var(--base-gap);
 
-          --duration: 0.3s;
+          font-size: 3rem;
+
+          --duration: 3.3s;
+          --timing-function: cubic-bezier(0, 1.5, 1, 1.5);
+
+          & span {
+            font-size: 0.5rem;
+          }
         }
       }
     </style>
@@ -113,20 +132,20 @@
 
       <ul id="swipeable-element-list">
         <swipeable-element role="listitem" style="view-transition-name: c1">
-          <span slot="card-bg-action-start" class="material-symbols-outlined">delete</span>
-          <span slot="card-bg-action-end" class="material-symbols-outlined">mail</span>
+          <span slot="action-indicator-left">Swipe to set up actions</span>
+          <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
           <button slot="card-delete">Del</button>
         </swipeable-element>
 
         <swipeable-element role="listitem" style="view-transition-name: c2">
-          <span slot="card-bg-action-start" class="material-symbols-outlined">delete</span>
-          <span slot="card-bg-action-end" class="material-symbols-outlined">mail</span>
+          <span slot="action-indicator-left" class="material-symbols-outlined">delete</span>
+          <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
           <button slot="card-delete">Del</button>
         </swipeable-element>
 
         <swipeable-element role="listitem" style="view-transition-name: c3">
-          <span slot="card-bg-action-start" class="material-symbols-outlined">delete</span>
-          <span slot="card-bg-action-end" class="material-symbols-outlined">mail</span>
+          <span slot="action-indicator-left" class="material-symbols-outlined">delete</span>
+          <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
           <button slot="card-delete">Del</button>
         </swipeable-element>
       </ul>
