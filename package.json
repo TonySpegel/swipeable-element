@@ -1,6 +1,6 @@
 {
   "name": "swipeable-element",
-  "description": "Webcomponent swipeable-element following open-wc recommendations",
+  "description": "An experimental web component which can be horizontally swiped to trigger actions",
   "license": "MIT",
   "author": "Tony Spegel",
   "version": "0.0.0",
@@ -36,7 +36,6 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.0.2",
     "prettier": "^3.0.3",
-    "query-assigned-element-content": "^0.0.2",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
   },
