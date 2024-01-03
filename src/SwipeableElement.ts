@@ -3,12 +3,6 @@ import { property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js';
 
-/**
- * TODO:
- * - [] confirm[Start|End]Action: @property({ type: Boolean }) accessor confirmStartAction = false;
- * - [] button can't be clicked on touch because of preventDefault
- */
-
 const calcTreshold = (targetWidth: number, treshold: number) => {
   return targetWidth * treshold;
 };
@@ -21,6 +15,21 @@ const calcOpacity = (screenX: number, elementWidth: number) => {
 
 type SwipeDirection = 'all' | 'left' | 'right';
 
+/**
+ * @summary An experimental web component which can be horizontally swiped to trigger actions
+ *
+ * @slot (default) - The content of the component
+ * @slot action-indicator-left -  The component’s indicator for a left swipe, usually text or an icon
+ * @slot action-indicator-right - The component’s indicator for a right swipe, usually text or an icon
+ *
+ * @csspart element-wrapper - The component’s wrapper element
+ * @csspart action-indicator - Provides a "leave behind" indicator
+ * @csspart action-indicator-left - What happens if you swipe left
+ * @csspart action-indicator-right - What happens if you swipe right
+ * @csspart content - The swipeable part of the component
+ *
+ * Copyright © 2024 Tony Spegel
+ */
 export class SwipeableElement extends LitElement {
   static styles = css`
     :host {
@@ -90,7 +99,7 @@ export class SwipeableElement extends LitElement {
   accessor treshold = 0.35;
 
   @state()
-  accessor #screenX: number = 0;
+  accessor #elementPosition: number = 0;
 
   @state()
   accessor #opacity: number = 1;
@@ -126,7 +135,7 @@ export class SwipeableElement extends LitElement {
 
     this.resetting = true;
     this.#opacity = 1;
-    this.#screenX = 0;
+    this.#elementPosition = 0;
   }
 
   onStart(event: PointerEvent) {
@@ -149,25 +158,22 @@ export class SwipeableElement extends LitElement {
     event.preventDefault(); // TODO problems w/ touch
   }
 
-  calcX = (current: number, start: number) => {
+  calcElementPosition(current: number, start: number) {
     const dir = this.allowDirection;
-
-    let x = current - start;
-
-    console.log({ current,start });
+    let position = current - start;
 
     if (dir === 'left' && current < start) {
-      return x;
+      return position;
     }
 
     if (dir === 'right' && current > start) {
-      return x;
+      return position;
     }
 
     if (dir === 'all') {
-      return x;
+      return position;
     }
-  };
+  }
 
   onMove = (event: PointerEvent) => {
     this.currentX = event.pageX;
@@ -178,16 +184,17 @@ export class SwipeableElement extends LitElement {
 
     if (this.dragging) {
       this.resetting = false;
-      this.#screenX = this.calcX(this.currentX, this.startX) || 0;
+      this.#elementPosition =
+        this.calcElementPosition(this.currentX, this.startX) || 0;
     }
 
-    this.#opacity = calcOpacity(this.#screenX, this.targetBCR?.width);
+    this.#opacity = calcOpacity(this.#elementPosition, this.targetBCR?.width);
 
     if (this.dragging) {
       return;
     }
 
-    const isNearlyAtStart = Math.abs(this.#screenX) < 0.1;
+    const isNearlyAtStart = Math.abs(this.#elementPosition) < 0.1;
     const isNearlyInvisible = this.#opacity < 0.01;
 
     if (isNearlyInvisible) {
@@ -206,9 +213,11 @@ export class SwipeableElement extends LitElement {
 
     const treshold = calcTreshold(this.targetBCR?.width, this.treshold);
 
-    if (Math.abs(this.#screenX) > treshold) {
+    if (Math.abs(this.#elementPosition) > treshold) {
       this.targetX =
-        this.#screenX > 0 ? this.targetBCR?.width : -this.targetBCR?.width;
+        this.#elementPosition > 0
+          ? this.targetBCR?.width
+          : -this.targetBCR?.width;
 
       this.deleteElement();
     } else {
@@ -244,7 +253,7 @@ export class SwipeableElement extends LitElement {
           })}
           style=${styleMap({
             opacity: this.#opacity,
-            transform: `translateX(${this.#screenX}px)`,
+            transform: `translateX(${this.#elementPosition}px)`,
           })}
           part="content"
         >

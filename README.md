@@ -106,6 +106,7 @@ swipeable-element::part(content) {
 
 Example usage:
 ```css
+/* CSS */
 swipeable-element::part(content) {
   &.dragging {
     cursor: grabbing;
