@@ -14,8 +14,9 @@ A few notable differences compared to Paul Lewis' solution:
 - Uses pointer-events to unify different input methods
 - Is a web component made with [Lit](https://lit.dev/)
 - An update method or `requestAnimationFrame` isn't needed as Lit handles that
-- Can be configured with [slots](#slots), [CSS variables](#css-custom-properties-variables), [classes](#css-classes) and [CSS parts](#css-parts)
-- Has a "leave behind" indicator for each direction
+- Can be configured with [slots](#slots), [attributes](#attributes), [CSS variables](#css-custom-properties-variables), [classes](#css-classes) and [CSS parts](#css-parts)
+- Has a "leave behind" indicator for each swipe direction
+- It's possible to allow certain swipe directions 
 
 ## UX & accessiblity considerations
 
@@ -31,26 +32,52 @@ For example, Outlook, GMail and Discord all offer alternatives in the form of a 
 <swipeable-element style="view-transition-name: c1">
   <span slot="action-indicator-left">Swipe to set up actions</span>
   <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
-  <button slot="card-delete">Del</button>
+  <div>
+    <span class="drag">👀</span>
+    <span class="reset">🐸</span>
+  </div>
 </swipeable-element>
 ```
+
+To animate the deletion of items you have to add a unique `view-transition-name` per element.
 
 ### Slots
 
 | Name                   | Description                                                         |
 |------------------------|---------------------------------------------------------------------|
+|(default)               | The content of the component                                        |
 |`action-indicator-left` | The component’s indicator for a left swipe, usually text or an icon |
 |`action-indicator-right`| The component’s indicator for a right swipe, usually text or an icon|
 
+### Attributes
+
+It's possible to set the following two attributes: `allowDirection` & `treshold`. 
+`dragging` & `resetting` will be present according to the element's current state.
+
+| Name           | Description                                                |Default|
+|----------------|------------------------------------------------------------|-------|
+|`allowDirection`| Sets a direction that can be swiped: `all`, `left`, `right`| `all` |
+|`treshold`      | Used to determine how far the element has been dragged     | `0.35`|
+|`dragging`      | Present when `content` is dragged                          | -     |
+|`resetting`     | Present while `content`'s transition is playing            | -     |
+
+Example usage:
+```html
+<!-- HTML -->
+<swipeable-element allowdirection="right" treshold="0.3">
+  <!-- Element content -->
+</swipeable-element>
+```
 ### CSS custom properties (variables)
-The following variables can be set to adjust the behaviour of the swipeable part of the component.
+The following variables can be set to adjust the behaviour of the swipeable part of the 
+component and also its basic colors.
 
 | Name                        | Description                                        | Default     |
 |-----------------------------|----------------------------------------------------|-------------|
 |`--duration`                 | Length of time that the animation takes to complete|`0.3s`       |
 |`--timing-function`          | How the swipeable element animation progresses     |`ease-in-out`|
-|`--action-indicator-bg-color`| Background color for the action indicator wrapper  |`ease-in-out`|
-|`--action-indicator-bg-color`| How the swipeable element animation progresses     |`ease-in-out`|
+|`--action-indicator-bg-color`| Background color for the action indicator wrapper  |`#e3f2fd`    |
+|`--content-bg-color`         | How the swipeable element animation progresses     |`#e6e6ff`    |
 
 ### CSS parts
 | Name                   | Description                         |
@@ -63,6 +90,7 @@ The following variables can be set to adjust the behaviour of the swipeable part
 
 Example usage:
 ```css
+/* CSS */
 swipeable-element::part(content) {
   /* Bouncy animation */ 
   --timing-function: cubic-bezier(0, 1.5, 1, 1.5);

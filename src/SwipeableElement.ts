@@ -19,6 +19,8 @@ const calcOpacity = (screenX: number, elementWidth: number) => {
   return 1 - normalizedDragDistance ** 3;
 };
 
+type SwipeDirection = 'all' | 'left' | 'right';
+
 export class SwipeableElement extends LitElement {
   static styles = css`
     :host {
@@ -26,7 +28,7 @@ export class SwipeableElement extends LitElement {
       --timing-function: ease-in-out;
 
       --action-indicator-bg-color: #e3f2fd;
-      --content-bg-color: rgb(230, 230, 255);
+      --content-bg-color: #e6e6ff;
 
       display: block;
     }
@@ -80,6 +82,9 @@ export class SwipeableElement extends LitElement {
 
   @property({ type: Boolean, reflect: true })
   accessor resetting = false;
+
+  @property({ type: String })
+  accessor allowDirection: SwipeDirection = 'all';
 
   @property({ type: Number })
   accessor treshold = 0.35;
@@ -144,6 +149,26 @@ export class SwipeableElement extends LitElement {
     event.preventDefault(); // TODO problems w/ touch
   }
 
+  calcX = (current: number, start: number) => {
+    const dir = this.allowDirection;
+
+    let x = current - start;
+
+    console.log({ current,start });
+
+    if (dir === 'left' && current < start) {
+      return x;
+    }
+
+    if (dir === 'right' && current > start) {
+      return x;
+    }
+
+    if (dir === 'all') {
+      return x;
+    }
+  };
+
   onMove = (event: PointerEvent) => {
     this.currentX = event.pageX;
 
@@ -153,7 +178,7 @@ export class SwipeableElement extends LitElement {
 
     if (this.dragging) {
       this.resetting = false;
-      this.#screenX = this.currentX - this.startX;
+      this.#screenX = this.calcX(this.currentX, this.startX) || 0;
     }
 
     this.#opacity = calcOpacity(this.#screenX, this.targetBCR?.width);
@@ -229,4 +254,3 @@ export class SwipeableElement extends LitElement {
     `;
   }
 }
-// <slot @click="${this.deleteElement}" name="card-delete"></slot>

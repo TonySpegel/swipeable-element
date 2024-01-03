@@ -55,9 +55,13 @@
       }
 
       swipeable-element {
-        span {
+        & span {
           &.drag {
             display: none;
+          }
+
+          &.material-symbols-outlined {
+            font-size: 2.2rem;
           }
         }
 
@@ -71,8 +75,11 @@
           }
         }
 
-        & button {
-          font-size: 1.5rem;
+        span {
+          &.setup {
+            font-size: 1.3rem;
+            text-wrap: balance;
+          }
         }
 
         &::part(element-wrapper) {
@@ -86,10 +93,8 @@
         &::part(action-indicator-left) {
           display: flex;
           padding: var(--base-gap);
-
-          font-size: 1.3rem;
-          text-wrap: balance;
           width: 50%;
+          font-size: 2rem;
         }
 
         &::part(action-indicator-right) {
@@ -108,7 +113,7 @@
 
           font-size: 3rem;
 
-          --duration: 3.3s;
+          /* --duration: 3.3s; */
           --timing-function: cubic-bezier(0, 1.5, 1, 1.5);
 
           & span {
@@ -134,9 +139,8 @@
 
       <ul id="swipeable-element-list">
         <swipeable-element role="listitem" style="view-transition-name: c1">
-          <span slot="action-indicator-left">Swipe to set up actions</span>
+          <span slot="action-indicator-left" class="setup">Swipe to set up actions</span>
           <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
-          <button slot="card-delete">Del</button>
           <div>
             <span class="drag">👀</span>
             <span class="reset">🐸</span>
@@ -146,13 +150,19 @@
         <swipeable-element role="listitem" style="view-transition-name: c2">
           <span slot="action-indicator-left" class="material-symbols-outlined">delete</span>
           <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
-          <button slot="card-delete">Del</button>
+          <div>
+            <span class="drag">👀</span>
+            <span class="reset">🐸</span>
+          </div>
         </swipeable-element>
 
         <swipeable-element role="listitem" style="view-transition-name: c3">
           <span slot="action-indicator-left" class="material-symbols-outlined">delete</span>
           <span slot="action-indicator-right" class="material-symbols-outlined">mail</span>
-          <button slot="card-delete">Del</button>
+          <div>
+            <span class="drag">👀</span>
+            <span class="reset">🐸</span>
+          </div>
         </swipeable-element>
       </ul>
     </div>
