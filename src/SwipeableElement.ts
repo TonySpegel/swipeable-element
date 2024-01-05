@@ -3,9 +3,8 @@ import { property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js';
 
-const calcTreshold = (targetWidth: number, treshold: number) => {
-  return targetWidth * treshold;
-};
+const calcTreshold = (targetWidth: number, treshold: number) =>
+  targetWidth * treshold;
 
 const calcOpacity = (screenX: number, elementWidth: number) => {
   const normalizedDragDistance = Math.abs(screenX) / elementWidth;
@@ -21,6 +20,16 @@ type SwipeDirection = 'all' | 'left' | 'right';
  * @slot (default) - The content of the component
  * @slot action-indicator-left -  The component’s indicator for a left swipe, usually text or an icon
  * @slot action-indicator-right - The component’s indicator for a right swipe, usually text or an icon
+ *
+ * @attribute allowDirection - Sets a direction that can be swiped: all, left, right
+ * @attribute treshold - Used to determine how far the element has been dragged
+ * @attribute dragging - Present when content is dragged
+ * @attribute resetting - Present while content's transition is playing
+ *
+ * @cssproperty --duration - Length of time that the animation takes to complete
+ * @cssproperty --timing-function - How the swipeable element animation progresses
+ * @cssproperty --action-indicator-bg-color - Background color for the action indicator wrapper
+ * @cssproperty --content-bg-color - How the swipeable element animation progresses
  *
  * @csspart element-wrapper - The component’s wrapper element
  * @csspart action-indicator - Provides a "leave behind" indicator
@@ -158,21 +167,15 @@ export class SwipeableElement extends LitElement {
     event.preventDefault(); // TODO problems w/ touch
   }
 
-  calcElementPosition(current: number, start: number) {
+  calcElementPosition(current: number, start: number): number {
     const dir = this.allowDirection;
-    let position = current - start;
+    const position = current - start;
 
-    if (dir === 'left' && current < start) {
-      return position;
-    }
+    if (dir === 'left' && current > start) return 0;
+    if (dir === 'right' && current < start) return 0;
 
-    if (dir === 'right' && current > start) {
-      return position;
-    }
-
-    if (dir === 'all') {
-      return position;
-    }
+    // dir = 'all'
+    return position;
   }
 
   onMove = (event: PointerEvent) => {

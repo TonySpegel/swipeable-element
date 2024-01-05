@@ -1,11 +1,22 @@
 {
   "name": "swipeable-element",
   "description": "An experimental web component which can be horizontally swiped to trigger actions",
+  "keywords": [
+    "swiper",
+    "lit",
+    "lit-element",
+    "web components"
+  ],
   "license": "MIT",
   "author": "Tony Spegel",
   "version": "0.0.0",
   "main": "dist/src/index.js",
   "module": "dist/src/index.js",
+  "type": "module",
+  "files": [
+    "./dist/src/*",
+    "custom-elements.json"
+  ],
   "exports": {
     ".": "./dist/src/index.js",
     "./swipeable-element.js": "./dist/src/swipeable-element.js"
@@ -13,16 +24,18 @@
   "scripts": {
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
     "build": "tsc",
-    "prepublish": "tsc",
+    "prepublish": "npm run build && npm run create-ce-manifest",
     "lint": "eslint --ext .ts,.html . --ignore-path .gitignore && prettier \"**/*.ts\" --check --ignore-path .gitignore",
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
     "test": "tsc && wtr --coverage",
-    "test:watch": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --watch\""
+    "test:watch": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --watch\"",
+    "create-ce-manifest": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/**/*.styles.ts\""
   },
   "dependencies": {
     "lit": "^3.0.2"
   },
   "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.9.0",
     "@open-wc/eslint-config": "^12.0.2",
     "@open-wc/testing": "next",
     "@types/dom-view-transitions": "^1.0.4",
@@ -61,7 +74,8 @@
           "ignorePackages": true
         }
       ],
-      "class-methods-use-this": "error"
+      "class-methods-use-this": "error",
+      "lines-between-class-members": "off"
     }
   },
   "prettier": {

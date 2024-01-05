@@ -1,0 +1,289 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/SwipeableElement.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "SwipeableElement",
+          "cssProperties": [
+            {
+              "description": "Length of time that the animation takes to complete",
+              "name": "--duration"
+            },
+            {
+              "description": "How the swipeable element animation progresses",
+              "name": "--timing-function"
+            },
+            {
+              "description": "Background color for the action indicator wrapper",
+              "name": "--action-indicator-bg-color"
+            },
+            {
+              "description": "How the swipeable element animation progresses",
+              "name": "--content-bg-color"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The component’s wrapper element",
+              "name": "element-wrapper"
+            },
+            {
+              "description": "Provides a \"leave behind\" indicator",
+              "name": "action-indicator"
+            },
+            {
+              "description": "What happens if you swipe left",
+              "name": "action-indicator-left"
+            },
+            {
+              "description": "What happens if you swipe right",
+              "name": "action-indicator-right"
+            },
+            {
+              "description": "The swipeable part of the component Copyright © 2024 Tony Spegel",
+              "name": "content"
+            }
+          ],
+          "slots": [
+            {
+              "description": "The content of the component",
+              "name": "(default)"
+            },
+            {
+              "description": " The component’s indicator for a left swipe, usually text or an icon",
+              "name": "action-indicator-left"
+            },
+            {
+              "description": "The component’s indicator for a right swipe, usually text or an icon",
+              "name": "action-indicator-right"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "targetBCR",
+              "type": {
+                "text": "DOMRect"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "target",
+              "type": {
+                "text": "EventTarget | null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "targetX",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "startX",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "currentX",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "accessor",
+              "attribute": "accessor",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dragging",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "resetting",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "allowDirection",
+              "type": {
+                "text": "SwipeDirection"
+              },
+              "default": "'all'"
+            },
+            {
+              "kind": "field",
+              "name": "treshold",
+              "type": {
+                "text": "number"
+              },
+              "default": "0.35"
+            },
+            {
+              "kind": "field",
+              "name": "#elementPosition",
+              "privacy": "private",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "#opacity",
+              "privacy": "private",
+              "type": {
+                "text": "number"
+              },
+              "default": "1"
+            },
+            {
+              "kind": "method",
+              "name": "deleteElement"
+            },
+            {
+              "kind": "method",
+              "name": "resetElement"
+            },
+            {
+              "kind": "method",
+              "name": "onStart",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "PointerEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "calcElementPosition",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "current",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "start",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "onMove"
+            },
+            {
+              "kind": "field",
+              "name": "onEnd"
+            }
+          ],
+          "attributes": [
+            {
+              "description": "Sets a direction that can be swiped: all, left, right",
+              "name": "allowDirection"
+            },
+            {
+              "description": "Used to determine how far the element has been dragged",
+              "name": "treshold"
+            },
+            {
+              "description": "Present when content is dragged",
+              "name": "dragging"
+            },
+            {
+              "description": "Present while content's transition is playing",
+              "name": "resetting"
+            },
+            {
+              "name": "accessor",
+              "fieldName": "accessor",
+              "attribute": "accessor"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "summary": "An experimental web component which can be horizontally swiped to trigger actions",
+          "tagName": "swipeable-element",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "SwipeableElement",
+          "declaration": {
+            "name": "SwipeableElement",
+            "module": "src/SwipeableElement.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "SwipeableElement",
+          "declaration": {
+            "name": "SwipeableElement",
+            "module": "./SwipeableElement.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/swipeable-element.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "swipeable-element",
+          "declaration": {
+            "name": "SwipeableElement",
+            "module": "/src/SwipeableElement.js"
+          }
+        }
+      ]
+    }
+  ]
+}
